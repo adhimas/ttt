@@ -17,8 +17,7 @@ func main() {
 	signal.Notify(interrupt, os.Interrupt)
 
 	// connect to server
-	u := url.URL{Scheme: "ws", Host: ":8080", Path: "/"}
-	log.Printf("connecting to %s", u.String())
+	u := url.URL{Scheme: "ws", Host: ":8080", Path: "/"} // TODO: support config
 
 	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
 	if err != nil {
@@ -55,9 +54,6 @@ func main() {
 			return
 		case <-interrupt:
 			log.Println("interrupt")
-
-			// Cleanly close the connection by sending a close message and then
-			// waiting (with timeout) for the server to close the connection.
 			err := c.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
 			if err != nil {
 				log.Println("write close:", err)

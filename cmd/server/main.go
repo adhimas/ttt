@@ -10,7 +10,7 @@ import (
 	"example.com/ttt/internal/messaging"
 )
 
-var upgrader = websocket.Upgrader{} // use default options
+var upgrader = websocket.Upgrader{} // TODO: configure
 
 var clients = make(chan struct{}, 100)
 
@@ -30,7 +30,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	c, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Print("upgrade:", err)
+		log.Println("ugprade:", err)
 		return
 	}
 	defer c.Close()
@@ -62,4 +62,6 @@ func main() {
 
 	http.HandleFunc("/", handler)
 	log.Fatal(http.ListenAndServe(":8080", nil))
+	// TODO: configure server
+	// TODO: handle graceful shutdown
 }
