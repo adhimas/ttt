@@ -108,8 +108,8 @@ func newGame() *game {
 	}
 }
 
-func start(ctx context.Context, p1, p2 Subscription) {
-	// TODO: handle context
+// TODO: handle context
+func start(_ context.Context, p1, p2 Subscription) {
 	game := newGame()
 	for game.canContinue() {
 		board := slices.Clone(game.board)
@@ -146,17 +146,21 @@ func start(ctx context.Context, p1, p2 Subscription) {
 		game.endTurn()
 	}
 
-	board := slices.Clone(game.board)
+	game.cleanUp(p1, p2)
+}
+
+func (g *game) cleanUp(p1, p2 Subscription) {
+	board := slices.Clone(g.board)
 	update := GameUpdate{Board: board}
 
-	xWins, oWins := game.checkWinner()
+	xWins, oWins := g.checkWinner()
 	winner := Empty
 	if xWins {
 		winner = X
 	} else if oWins {
 		winner = O
 	}
-	update.Winner = &winner // interrupted game?
+	update.Winner = &winner
 
 	updateP1 := update
 	updateP2 := update

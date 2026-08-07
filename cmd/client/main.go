@@ -28,10 +28,10 @@ func main() {
 	defer c.Close()
 
 	// listen to messages from server
-	done := make(chan struct{})
 	srvMessages := make(chan messaging.Message)
+	srvMessagesDone := make(chan struct{})
 	go func() {
-		defer close(done)
+		defer close(srvMessagesDone)
 		for {
 			var message messaging.Message
 			err := c.ReadJSON(&message)
@@ -68,7 +68,7 @@ func main() {
 				log.Println("write:", err)
 				return
 			}
-		case <-done:
+		case <-srvMessagesDone:
 			return
 		case <-interrupt:
 			log.Println("interrupt")
