@@ -136,7 +136,6 @@ func Start(ctx context.Context, p1, p2 Subscription) {
 			}
 
 			move := <-nextMove
-			close(nextMove)
 
 			err := game.handleMove(move)
 			if err != nil {

@@ -90,6 +90,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		update.NextMove <- respond.Payload.Move
+		close(update.NextMove)
 	}
 
 	err = c.WriteControl(
