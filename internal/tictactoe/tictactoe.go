@@ -40,7 +40,9 @@ const (
 	playerO
 )
 
-var magic = []int{
+// every column/row/main diagonal adds up equally
+var magicConstant = 15
+var magicSquare = []int{
 	2, 7, 6,
 	9, 5, 1,
 	4, 3, 8,
@@ -78,12 +80,12 @@ func (g *game) checkWinner() (bool, bool) {
 	for i, cell := range g.board {
 		switch cell {
 		case X:
-			xScore += magic[i]
+			xScore += magicSquare[i]
 		case O:
-			oScore += magic[i]
+			oScore += magicSquare[i]
 		}
 	}
-	return xScore == 15, oScore == 15
+	return xScore == magicConstant, oScore == magicConstant
 }
 
 func (g *game) canContinue() bool {
