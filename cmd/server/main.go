@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/websocket"
 
@@ -89,6 +90,15 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		update.NextMove <- respond.Payload.Move
+	}
+
+	err = c.WriteControl(
+		websocket.CloseMessage,
+		websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""),
+		time.Now().Add(5*time.Second),
+	)
+	if err != nil {
+		log.Println("close:", err)
 	}
 }
 
