@@ -1,20 +1,16 @@
 package main
 
 import (
-	"bufio"
-	"fmt"
 	"log"
 	"net/url"
 	"os"
 	"os/signal"
-	"strconv"
-	"strings"
 	"time"
 
 	"github.com/gorilla/websocket"
 
+	"example.com/ttt/internal/client/cli"
 	"example.com/ttt/internal/messaging"
-	"example.com/ttt/internal/tictactoe"
 )
 
 func main() {
@@ -53,23 +49,16 @@ func main() {
 		select {
 		case m := <-srvMessages:
 			if m.Code == messaging.StatusUpdate && m.Payload.StatusUpdate != nil {
-				printBoard(m.Payload.StatusUpdate.Board)
+				cli.PrintGame(m.Payload.StatusUpdate.Board)
 				if m.Payload.StatusUpdate.Winner != nil {
-					switch *m.Payload.StatusUpdate.Winner {
-					case tictactoe.Empty:
-						log.Printf("tied!")
-					case m.Payload.StatusUpdate.Piece:
-						log.Printf("you won!")
-					default:
-						log.Printf("game over")
-					}
+					cli.PrintWinner(*m.Payload.StatusUpdate)
 				}
 				continue
 			}
 			if m.Code != messaging.Prompt {
 				continue
 			}
-			move := prompt(m.Payload.Prompt)
+			move := cli.Prompt(m.Payload.Prompt)
 			msg := messaging.Message{
 				Code: messaging.Move,
 				Payload: messaging.Payload{
@@ -96,49 +85,5 @@ func main() {
 			}
 			return
 		}
-	}
-}
-
-func printBoard(board []tictactoe.Cell) {
-	for i, cell := range board {
-		if cell == tictactoe.Empty {
-			fmt.Printf(" %d", i)
-		} else {
-			fmt.Printf(" %s", cell.String())
-		}
-
-		if i%3 == 2 {
-			fmt.Println()
-		}
-	}
-}
-
-func prompt(player tictactoe.Cell) int {
-	for {
-		scanner := bufio.NewScanner(os.Stdin)
-		fmt.Printf("enter number for %s: ", player)
-
-		if more := scanner.Scan(); !more {
-			continue
-		}
-		// TODO: handle interrupt
-		if err := scanner.Err(); err != nil {
-			log.Println("scanner:", err)
-			continue
-		}
-
-		line := scanner.Text()
-		cellNum, err := strconv.Atoi(strings.TrimSpace(line))
-		if err != nil {
-			log.Println("prompt input:", err)
-			continue
-		}
-		if cellNum < 0 || cellNum > 8 { // 0-8
-			log.Println("prompt input: invalid move")
-			continue
-		}
-
-		fmt.Println()
-		return cellNum
 	}
 }
