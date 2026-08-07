@@ -12,12 +12,11 @@ import (
 	"example.com/ttt/internal/tictactoe"
 )
 
+const maxClients = 100
+
 // TODO: scope variables properly, e.g., pass to handler as a dependency
-
 var upgrader = websocket.Upgrader{} // TODO: configure
-
-var clients = make(chan struct{}, 100)
-
+var clients = make(chan struct{}, maxClients)
 var lobby chan tictactoe.Subscription
 
 func handler(w http.ResponseWriter, r *http.Request) {

@@ -32,6 +32,7 @@ type GameUpdate struct {
 	Winner   *Cell
 }
 
+// TODO: handle cancellation
 type Subscription chan GameUpdate
 
 type turn int
