@@ -81,6 +81,9 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		var respond messaging.Message
 		err := c.ReadJSON(&respond)
 		if err != nil {
+			if websocket.IsCloseError(err, websocket.CloseNormalClosure) {
+				break
+			}
 			log.Println("read:", err)
 			break
 		}
