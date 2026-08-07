@@ -49,10 +49,7 @@ func main() {
 		select {
 		case m := <-srvMessages:
 			if m.Code == messaging.StatusUpdate && m.Payload.StatusUpdate != nil {
-				cli.PrintGame(m.Payload.StatusUpdate.Board)
-				if m.Payload.StatusUpdate.Winner != nil {
-					cli.PrintWinner(*m.Payload.StatusUpdate)
-				}
+				cli.PrintGame(m.Payload.StatusUpdate)
 				continue
 			}
 			if m.Code != messaging.Prompt {

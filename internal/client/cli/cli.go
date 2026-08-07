@@ -11,8 +11,8 @@ import (
 	"example.com/ttt/internal/tictactoe"
 )
 
-func PrintGame(board []tictactoe.Cell) {
-	for i, cell := range board {
+func PrintGame(game *tictactoe.GameUpdate) {
+	for i, cell := range game.Board {
 		if cell == tictactoe.Empty {
 			fmt.Printf(" %d", i)
 		} else {
@@ -23,16 +23,20 @@ func PrintGame(board []tictactoe.Cell) {
 			fmt.Println()
 		}
 	}
+
+	if game.Winner != nil {
+		printWinner(game.Piece, *game.Winner)
+	}
 }
 
-func PrintWinner(game tictactoe.GameUpdate) {
-	switch *game.Winner {
+func printWinner(player, winner tictactoe.Cell) {
+	switch winner {
 	case tictactoe.Empty:
-		log.Printf("tied!")
-	case game.Piece:
-		log.Printf("you won!")
+		fmt.Println("tied!")
+	case player:
+		fmt.Println("you won!")
 	default:
-		log.Printf("game over")
+		fmt.Println("game over")
 	}
 }
 
