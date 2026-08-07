@@ -87,6 +87,8 @@ func (g *game) checkWinner() (bool, bool) {
 }
 
 func (g *game) canContinue() bool {
+	// TODO: check for early draw
+
 	if xWins, oWins := g.checkWinner(); xWins || oWins {
 		return false
 	}
@@ -106,66 +108,69 @@ func newGame() *game {
 	}
 }
 
-func Start(ctx context.Context, p1, p2 Subscription) {
-	go func() {
-		game := newGame()
-		for game.canContinue() {
-			board := slices.Clone(game.board)
-			nextMove := make(chan int)
-			update := GameUpdate{
-				NextMove: nextMove,
-				Board:    board,
-			}
-
-			var ch Subscription
-			var piece Cell
-			if game.turn == playerX {
-				ch = p1
-				piece = X
-			} else {
-				ch = p2
-				piece = O
-			}
-
-			update.Piece = piece
-
-			select {
-			case ch <- update:
-			default:
-				continue
-			}
-
-			move := <-nextMove
-
-			err := game.handleMove(move)
-			if err != nil {
-				continue
-			}
-			game.endTurn()
-		}
-
+func start(ctx context.Context, p1, p2 Subscription) {
+	// TODO: handle context
+	game := newGame()
+	for game.canContinue() {
 		board := slices.Clone(game.board)
-		update := GameUpdate{Board: board}
-
-		xWins, oWins := game.checkWinner()
-		winner := Empty
-		if xWins {
-			winner = X
-		} else if oWins {
-			winner = O
+		nextMove := make(chan int)
+		update := GameUpdate{
+			NextMove: nextMove,
+			Board:    board,
 		}
-		update.Winner = &winner
 
-		updateP1 := update
-		updateP2 := update
+		var ch Subscription
+		var piece Cell
+		if game.turn == playerX {
+			ch = p1
+			piece = X
+		} else {
+			ch = p2
+			piece = O
+		}
 
-		updateP1.Piece = X
-		updateP2.Piece = O
+		update.Piece = piece
 
-		p1 <- updateP1
-		p2 <- updateP2
+		select {
+		case ch <- update:
+		default:
+			continue
+		}
 
-		close(p1)
-		close(p2)
-	}()
+		move := <-nextMove
+
+		err := game.handleMove(move)
+		if err != nil {
+			continue
+		}
+		game.endTurn()
+	}
+
+	board := slices.Clone(game.board)
+	update := GameUpdate{Board: board}
+
+	xWins, oWins := game.checkWinner()
+	winner := Empty
+	if xWins {
+		winner = X
+	} else if oWins {
+		winner = O
+	}
+	update.Winner = &winner // interrupted game?
+
+	updateP1 := update
+	updateP2 := update
+
+	updateP1.Piece = X
+	updateP2.Piece = O
+
+	p1 <- updateP1
+	p2 <- updateP2
+
+	close(p1)
+	close(p2)
+}
+
+func Start(ctx context.Context, p1, p2 Subscription) {
+	go start(ctx, p1, p2)
 }
