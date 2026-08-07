@@ -1,15 +1,20 @@
 package main
 
 import (
+	"bufio"
+	"fmt"
 	"log"
 	"net/url"
 	"os"
 	"os/signal"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gorilla/websocket"
 
 	"example.com/ttt/internal/messaging"
+	"example.com/ttt/internal/tictactoe"
 )
 
 func main() {
@@ -46,7 +51,17 @@ func main() {
 
 	for {
 		select {
-		case msg := <-srvMessages:
+		case m := <-srvMessages:
+			if m.Code != messaging.Prompt {
+				continue
+			}
+			move := prompt(m.Payload.Prompt)
+			msg := messaging.Message{
+				Code: messaging.Move,
+				Payload: messaging.Payload{
+					Move: move,
+				},
+			}
 			err := c.WriteJSON(msg)
 			if err != nil {
 				log.Println("write:", err)
@@ -67,5 +82,23 @@ func main() {
 			}
 			return
 		}
+	}
+}
+
+func prompt(player tictactoe.Cell) int {
+	for {
+		fmt.Printf("enter number for %s: ", player)
+		r := bufio.NewReader(os.Stdin)
+		x, _ := r.ReadString('\n') // read until delimiter, returns string including delimiter
+		cellNum, err := strconv.Atoi(strings.TrimSpace(x))
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		if cellNum < 0 || cellNum > 8 { // 0-8
+			fmt.Println("invalid move")
+			continue
+		}
+		return cellNum
 	}
 }
