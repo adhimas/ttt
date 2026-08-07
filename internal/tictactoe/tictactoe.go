@@ -141,7 +141,9 @@ func start(_ context.Context, p1, p2 Subscription) {
 		var abort bool
 		select {
 		case move := <-nextMove:
-			_ = game.handleMove(move)
+			if err := game.handleMove(move); err != nil {
+				continue
+			}
 		case <-time.After(30 * time.Second): // TODO: support config
 			abort = true
 		}
