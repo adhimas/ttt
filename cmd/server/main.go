@@ -47,7 +47,6 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	for {
 		update, ok := <-game
 		if !ok {
-			log.Println("no update")
 			return
 		}
 
@@ -80,6 +79,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		var respond messaging.Message
+		// TODO: handle closed client
 		err := c.ReadJSON(&respond)
 		if err != nil {
 			if websocket.IsCloseError(err, websocket.CloseNormalClosure) {
@@ -97,6 +97,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		close(update.NextMove)
 	}
 
+	// TODO: check for closed client
 	err = c.WriteControl(
 		websocket.CloseMessage,
 		websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""),
@@ -121,7 +122,9 @@ func main() {
 	}()
 
 	http.HandleFunc("/", handler)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+
 	// TODO: configure server
+	log.Fatal(http.ListenAndServe(":8080", nil))
+
 	// TODO: handle graceful shutdown
 }
