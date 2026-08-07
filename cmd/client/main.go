@@ -52,6 +52,20 @@ func main() {
 	for {
 		select {
 		case m := <-srvMessages:
+			if m.Code == messaging.StatusUpdate && m.Payload.StatusUpdate != nil {
+				printBoard(m.Payload.StatusUpdate.Board)
+				if m.Payload.StatusUpdate.Winner != nil {
+					switch *m.Payload.StatusUpdate.Winner {
+					case tictactoe.Empty:
+						log.Printf("tied!")
+					case m.Payload.StatusUpdate.Piece:
+						log.Printf("you won!")
+					default:
+						log.Printf("you lost!")
+					}
+				}
+				continue
+			}
 			if m.Code != messaging.Prompt {
 				continue
 			}
@@ -81,6 +95,21 @@ func main() {
 			case <-time.After(time.Second):
 			}
 			return
+		}
+	}
+}
+
+func printBoard(board []tictactoe.Cell) {
+	fmt.Println()
+	for i, cell := range board {
+		if cell == tictactoe.Empty {
+			fmt.Printf(" %d", i)
+		} else {
+			fmt.Printf(" %s", cell.String())
+		}
+
+		if i%3 == 2 {
+			fmt.Println()
 		}
 	}
 }
