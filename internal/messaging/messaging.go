@@ -1,5 +1,7 @@
 package messaging
 
+import "example.com/ttt/internal/tictactoe"
+
 type Code int
 
 const (
@@ -9,8 +11,14 @@ const (
 	StatusUpdate
 )
 
+type Payload struct { // TODO: generalize
+	StatusUpdate *tictactoe.GameUpdate
+	Move         int
+	Prompt       tictactoe.Cell
+}
+
 type Message struct {
-	Payload any
+	Payload Payload
 	Text    string
 	Code    Code
 }
