@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"os"
 	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -15,7 +16,7 @@ import (
 
 func main() {
 	interrupt := make(chan os.Signal, 1)
-	signal.Notify(interrupt, os.Interrupt)
+	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
 
 	// connect to server
 	u := url.URL{Scheme: "ws", Host: ":8080", Path: "/"} // TODO: support config
