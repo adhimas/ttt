@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"slices"
+	"time"
 )
 
 type Cell int
@@ -133,18 +134,21 @@ func start(_ context.Context, p1, p2 Subscription) {
 
 		update.Piece = piece
 
+		// TODO: check potential blocked update
+		ch <- update
+
+		var abort bool
 		select {
-		case ch <- update:
-		default:
-			continue
+		case move := <-nextMove:
+			_ = game.handleMove(move)
+		case <-time.After(30 * time.Second): // TODO: support config
+			abort = true
 		}
 
-		move := <-nextMove
-
-		err := game.handleMove(move)
-		if err != nil {
-			continue
+		if abort {
+			break
 		}
+
 		game.endTurn()
 	}
 
