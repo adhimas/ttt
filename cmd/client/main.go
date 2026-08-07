@@ -79,11 +79,6 @@ func main() {
 			)
 			if err != nil {
 				log.Println("write close:", err)
-				return
-			}
-			select {
-			case <-done:
-			case <-time.After(time.Second):
 			}
 			return
 		}
