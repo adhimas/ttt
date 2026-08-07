@@ -61,7 +61,7 @@ func main() {
 					case m.Payload.StatusUpdate.Piece:
 						log.Printf("you won!")
 					default:
-						log.Printf("you lost!")
+						log.Printf("game over")
 					}
 				}
 				continue
@@ -100,7 +100,6 @@ func main() {
 }
 
 func printBoard(board []tictactoe.Cell) {
-	fmt.Println()
 	for i, cell := range board {
 		if cell == tictactoe.Empty {
 			fmt.Printf(" %d", i)
@@ -116,18 +115,30 @@ func printBoard(board []tictactoe.Cell) {
 
 func prompt(player tictactoe.Cell) int {
 	for {
+		scanner := bufio.NewScanner(os.Stdin)
 		fmt.Printf("enter number for %s: ", player)
-		r := bufio.NewReader(os.Stdin)
-		x, _ := r.ReadString('\n') // read until delimiter, returns string including delimiter
-		cellNum, err := strconv.Atoi(strings.TrimSpace(x))
+
+		if more := scanner.Scan(); !more {
+			continue
+		}
+		// TODO: handle interrupt
+		if err := scanner.Err(); err != nil {
+			log.Println("scanner:", err)
+			continue
+		}
+
+		line := scanner.Text()
+		cellNum, err := strconv.Atoi(strings.TrimSpace(line))
 		if err != nil {
-			fmt.Println(err)
+			log.Println("prompt input:", err)
 			continue
 		}
 		if cellNum < 0 || cellNum > 8 { // 0-8
-			fmt.Println("invalid move")
+			log.Println("prompt input: invalid move")
 			continue
 		}
+
+		fmt.Println()
 		return cellNum
 	}
 }
