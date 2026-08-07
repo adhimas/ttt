@@ -11,6 +11,8 @@ var upgrader = websocket.Upgrader{} // use default options
 
 var clients = make(chan struct{}, 100)
 
+var lobby chan struct{}
+
 func handler(w http.ResponseWriter, r *http.Request) {
 	select {
 	case clients <- struct{}{}:
@@ -30,6 +32,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer c.Close()
 
+	// ctx := r.Context()
+	// TODO
+	_ = <-lobby // select, timeout/interrupt
+
 	for {
 		_, message, err := c.ReadMessage()
 		if err != nil {
@@ -46,6 +52,16 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	lobby = make(chan struct{})
+	go func() {
+		for {
+			lobby <- struct{}{}
+			lobby <- struct{}{}
+			// TODO
+		}
+		// TODO: exit
+	}()
+
 	http.HandleFunc("/", handler)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
