@@ -9,7 +9,20 @@ import (
 
 var upgrader = websocket.Upgrader{} // use default options
 
+var clients = make(chan struct{}, 100)
+
 func handler(w http.ResponseWriter, r *http.Request) {
+	select {
+	case clients <- struct{}{}:
+	default:
+		log.Println("capacity reached")
+		w.WriteHeader(http.StatusServiceUnavailable)
+		return
+	}
+	defer func() {
+		<-clients
+	}()
+
 	c, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Print("upgrade:", err)
