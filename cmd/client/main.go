@@ -34,10 +34,12 @@ func main() {
 			var message messaging.Message
 			err := c.ReadJSON(&message)
 			if err != nil {
+				if websocket.IsCloseError(err, websocket.CloseNormalClosure) {
+					return
+				}
 				log.Println("read:", err)
 				return
 			}
-			log.Printf("recv: %v", message)
 			srvMessages <- message
 		}
 	}()
