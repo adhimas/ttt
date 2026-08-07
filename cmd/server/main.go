@@ -39,9 +39,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer c.Close()
 
-	// ctx := r.Context()
-	// TODO
-	game := <-lobby // select, timeout/interrupt
+	// TODO: add messaging for game wait
+
+	// TODO: cancel/interrupt
+	game := <-lobby
 
 	for {
 		update, ok := <-game
@@ -99,7 +100,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	err = c.WriteControl(
 		websocket.CloseMessage,
 		websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""),
-		time.Now().Add(5*time.Second),
+		time.Now().Add(5*time.Second), // TODO: configure
 	)
 	if err != nil {
 		log.Println("close:", err)

@@ -71,7 +71,11 @@ func main() {
 			return
 		case <-interrupt:
 			log.Println("interrupt")
-			err := c.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
+			err = c.WriteControl(
+				websocket.CloseMessage,
+				websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""),
+				time.Now().Add(5*time.Second), // TODO: configure
+			)
 			if err != nil {
 				log.Println("write close:", err)
 				return
