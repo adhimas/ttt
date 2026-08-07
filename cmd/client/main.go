@@ -8,6 +8,8 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+
+	"example.com/ttt/internal/messaging"
 )
 
 func main() {
@@ -26,25 +28,25 @@ func main() {
 
 	// listen to messages from server
 	done := make(chan struct{})
+	srvMessages := make(chan messaging.Message)
 	go func() {
 		defer close(done)
 		for {
-			_, msg, err := c.ReadMessage()
+			var message messaging.Message
+			err := c.ReadJSON(&message)
 			if err != nil {
 				log.Println("read:", err)
 				return
 			}
-			log.Printf("recv: %s", msg)
+			log.Printf("recv: %v", message)
+			srvMessages <- message
 		}
 	}()
 
-	ticker := time.NewTicker(time.Second)
-	defer ticker.Stop()
-
 	for {
 		select {
-		case t := <-ticker.C:
-			err := c.WriteMessage(websocket.TextMessage, []byte(t.String()))
+		case msg := <-srvMessages:
+			err := c.WriteJSON(msg)
 			if err != nil {
 				log.Println("write:", err)
 				return

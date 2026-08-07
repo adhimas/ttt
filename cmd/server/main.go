@@ -3,8 +3,11 @@ package main
 import (
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/websocket"
+
+	"example.com/ttt/internal/messaging"
 )
 
 var upgrader = websocket.Upgrader{} // use default options
@@ -37,17 +40,12 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	_ = <-lobby // select, timeout/interrupt
 
 	for {
-		_, message, err := c.ReadMessage()
-		if err != nil {
-			log.Println("read:", err)
-			break
-		}
-		log.Printf("recv: %s", message)
-		err = c.WriteMessage(websocket.TextMessage, []byte("server reply"))
+		err = c.WriteJSON(messaging.Message{Code: messaging.Other, Text: "test"})
 		if err != nil {
 			log.Println("write:", err)
 			break
 		}
+		time.Sleep(time.Second)
 	}
 }
 
