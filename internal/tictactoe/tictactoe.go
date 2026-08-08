@@ -32,7 +32,8 @@ type GameUpdate struct {
 	Winner   *Cell
 }
 
-// TODO: handle cancellation
+// TODO: support cancellation
+// TODO: improve comments in general
 type Subscription chan GameUpdate
 
 type turn int
@@ -114,6 +115,7 @@ func newGame() *game {
 }
 
 // TODO: handle context
+// TODO: improve (debug) logging
 func start(_ context.Context, p1, p2 Subscription) {
 	game := newGame()
 	for game.canContinue() {

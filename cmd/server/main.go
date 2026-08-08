@@ -20,9 +20,12 @@ var clients = make(chan struct{}, maxClients)
 var lobby chan tictactoe.Subscription
 
 func handler(w http.ResponseWriter, r *http.Request) {
+	// TODO: count active clients, measure duration
+	// TODO: collect metrics in general
 	select {
 	case clients <- struct{}{}:
 	default:
+		// TODO: improve logging
 		log.Println("capacity reached")
 		w.WriteHeader(http.StatusServiceUnavailable)
 		return
@@ -41,8 +44,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	// TODO: add messaging for game wait
 
 	// TODO: cancel/interrupt
+	// TODO: measure duration
 	game := <-lobby
 
+	// TODO: improve (debug) logging
 	for {
 		update, ok := <-game
 		if !ok {
@@ -115,7 +120,7 @@ func main() {
 			p2 := make(chan tictactoe.GameUpdate, 1)
 			lobby <- p1
 			lobby <- p2
-			tictactoe.Start(context.Background(), p1, p2)
+			tictactoe.Start(context.TODO(), p1, p2)
 		}
 		// TODO: exit
 	}()
