@@ -48,10 +48,11 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	game := <-lobby
 
 	// TODO: improve (debug) logging
+	// TODO: explore refactoring possibilities (e.g., helper for messaging boilerplate)
 	for {
 		update, ok := <-game
 		if !ok {
-			return
+			break
 		}
 
 		msg := messaging.Message{
