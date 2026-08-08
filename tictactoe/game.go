@@ -94,7 +94,7 @@ func (g *game) cleanUp(p1, p2 Subscription) {
 	} else if oWins {
 		winner = O
 	}
-	update.Winner = &winner // interrupted game?
+	update.Winner = &winner
 
 	updateP1 := update
 	updateP2 := update
