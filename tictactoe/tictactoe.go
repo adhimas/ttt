@@ -35,6 +35,10 @@ type GameUpdate struct {
 // TODO: improve comments in general
 type Subscription chan GameUpdate
 
+func Start(ctx context.Context, p1, p2 Subscription) {
+	go start(ctx, p1, p2)
+}
+
 // TODO: handle context
 // TODO: improve (debug) logging
 func start(_ context.Context, p1, p2 Subscription) {
@@ -80,8 +84,4 @@ func start(_ context.Context, p1, p2 Subscription) {
 	}
 
 	game.cleanUp(p1, p2)
-}
-
-func Start(ctx context.Context, p1, p2 Subscription) {
-	go start(ctx, p1, p2)
 }
