@@ -16,3 +16,14 @@ The binaries can be built with the following commands.
 $ go build -o client cmd/client/main.go
 $ go build -o server cmd/server/main.go
 ```
+
+## Design
+
+To enable clients to join and play the multiplayer, turn-based game, WebSocket
+is used to facilitate the communication between the server and the client.
+
+Structured messaging are exchanged between the two parties, carrying information
+such as player moves and updates of the state of the game.
+
+The server manages the game state by using these incoming/outgoing messages,
+structured as Go channels.
