@@ -43,12 +43,13 @@ const (
 )
 
 // every column/row/main diagonal adds up equally
-var magicConstant = 15
 var magicSquare = []int{
 	2, 7, 6,
 	9, 5, 1,
 	4, 3, 8,
 }
+
+const magicConstant = 15
 
 type game struct {
 	board []Cell
