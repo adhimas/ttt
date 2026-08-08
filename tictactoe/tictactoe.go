@@ -39,6 +39,11 @@ func Start(ctx context.Context, p1, p2 Subscription) {
 	go start(ctx, p1, p2)
 }
 
+// start creates a new game and runs it.
+// the game state is kept private and incoming/outgoing communications are handled via channels.
+//   - updates are sent to each player via their subscription channels.
+//   - player moves are sent via a channel included in the updates
+//
 // TODO: handle context
 // TODO: improve (debug) logging
 func start(_ context.Context, p1, p2 Subscription) {

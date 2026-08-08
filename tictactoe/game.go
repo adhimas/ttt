@@ -83,6 +83,7 @@ func newGame() *game {
 	}
 }
 
+// cleanUp sends the last update then closes the subscriptions.
 func (g *game) cleanUp(p1, p2 Subscription) {
 	board := slices.Clone(g.board)
 	update := GameUpdate{Board: board}
