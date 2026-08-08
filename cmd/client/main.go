@@ -48,6 +48,7 @@ func main() {
 
 	for {
 		select {
+		// handle messages from server (print, reply with player move)
 		case m := <-srvMessages:
 			if m.Code == messaging.StatusUpdate && m.Payload.StatusUpdate != nil {
 				cli.PrintGame(m.Payload.StatusUpdate)
