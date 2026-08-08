@@ -71,7 +71,6 @@ func main() {
 		case <-srvMessagesDone:
 			return
 		case <-interrupt:
-			log.Println("interrupt")
 			err = c.WriteControl(
 				websocket.CloseMessage,
 				websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""),
