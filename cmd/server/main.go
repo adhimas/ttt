@@ -47,6 +47,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	// TODO: measure duration
 	game := <-lobby
 
+	// receive updates from the game and send messages to client
 	// TODO: improve (debug) logging
 	// TODO: explore refactoring possibilities (e.g., helper for messaging boilerplate)
 	for {
