@@ -23,7 +23,6 @@ To enable clients to join and play the multiplayer, turn-based game, WebSocket
 is used to facilitate the communication between the server and the client.
 
 Structured messaging are exchanged between the two parties, carrying information
-such as player moves and updates of the state of the game.
-
-The server manages the game state by using these incoming/outgoing messages,
-structured as Go channels.
+such as player moves and updates of the state of the game. The server manages
+the game state by using these incoming/outgoing messages, modeled as Go
+channels.
