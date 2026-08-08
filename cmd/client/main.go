@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/url"
 	"os"
@@ -14,12 +15,16 @@ import (
 	"example.com/ttt/internal/messaging"
 )
 
+var addr = flag.String("addr", "localhost:8080", "service host")
+
 func main() {
+	flag.Parse()
+
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
 
 	// connect to server
-	u := url.URL{Scheme: "ws", Host: ":8080", Path: "/"} // TODO: support config
+	u := url.URL{Scheme: "ws", Host: *addr, Path: "/"} // TODO: support further config
 
 	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
 	if err != nil {

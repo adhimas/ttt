@@ -130,7 +130,7 @@ func main() {
 	http.HandleFunc("/", handler)
 
 	// TODO: configure server
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe("localhost:8080", nil))
 
 	// TODO: handle graceful shutdown
 }
