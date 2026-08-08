@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"example.com/ttt/internal/tictactoe"
+	"example.com/ttt/tictactoe"
 )
 
 func Prompt(player tictactoe.Cell) int {

@@ -1,6 +1,6 @@
 package messaging
 
-import "example.com/ttt/internal/tictactoe"
+import "example.com/ttt/tictactoe"
 
 type Code int
 

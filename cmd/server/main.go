@@ -9,7 +9,7 @@ import (
 	"github.com/gorilla/websocket"
 
 	"example.com/ttt/internal/messaging"
-	"example.com/ttt/internal/tictactoe"
+	"example.com/ttt/tictactoe"
 )
 
 const maxClients = 100

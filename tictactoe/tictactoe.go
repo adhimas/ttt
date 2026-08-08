@@ -28,7 +28,7 @@ func (c Cell) String() string {
 type GameUpdate struct {
 	Board    []Cell
 	NextMove chan<- int `json:"-"`
-	Piece    Cell
+	Piece    Cell       // nextplayer
 	Winner   *Cell
 }
 
@@ -172,7 +172,7 @@ func (g *game) cleanUp(p1, p2 Subscription) {
 	} else if oWins {
 		winner = O
 	}
-	update.Winner = &winner
+	update.Winner = &winner // interrupted game?
 
 	updateP1 := update
 	updateP2 := update
