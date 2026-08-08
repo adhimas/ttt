@@ -14,6 +14,24 @@ var magicSquare = []int{
 	4, 3, 8,
 }
 
+type Cell int
+
+const (
+	Empty Cell = iota
+	X
+	O
+)
+
+var cellNames = map[Cell]string{
+	Empty: "_",
+	X:     "X",
+	O:     "O",
+}
+
+func (c Cell) String() string {
+	return cellNames[c]
+}
+
 type turn int
 
 const (

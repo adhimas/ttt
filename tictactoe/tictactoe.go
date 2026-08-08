@@ -6,35 +6,6 @@ import (
 	"time"
 )
 
-type Cell int
-
-const (
-	Empty Cell = iota
-	X
-	O
-)
-
-var cellNames = map[Cell]string{
-	Empty: "_",
-	X:     "X",
-	O:     "O",
-}
-
-func (c Cell) String() string {
-	return cellNames[c]
-}
-
-type GameUpdate struct {
-	Board    []Cell
-	NextMove chan<- int `json:"-"`
-	Piece    Cell       // nextplayer
-	Winner   *Cell
-}
-
-// TODO: support cancellation
-// TODO: improve comments in general
-type Subscription chan GameUpdate
-
 func Start(ctx context.Context, p1, p2 Subscription) {
 	go start(ctx, p1, p2)
 }
@@ -68,7 +39,7 @@ func start(_ context.Context, p1, p2 Subscription) {
 
 		update.Piece = piece
 
-		// TODO: check potential blocked update
+		// TODO: handle blocked update, add timeout
 		ch <- update
 
 		var abort bool
