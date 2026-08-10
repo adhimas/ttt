@@ -5,13 +5,17 @@ import (
 	"slices"
 )
 
-const magicConstant = 15
+var winningTriples = [][]int{
+	{0, 1, 2}, // rows
+	{3, 4, 5},
+	{6, 7, 8},
 
-// every column/row/main diagonal adds up equally
-var magicSquare = []int{
-	2, 7, 6,
-	9, 5, 1,
-	4, 3, 8,
+	{0, 3, 6}, // cols
+	{1, 4, 7},
+	{2, 5, 8},
+
+	{0, 4, 8}, // diags
+	{2, 4, 6},
 }
 
 type Cell int
@@ -67,16 +71,17 @@ func (g *game) endTurn() {
 }
 
 func (g *game) checkWinner() (bool, bool) {
-	xScore, oScore := 0, 0
-	for i, cell := range g.board {
-		switch cell {
-		case X:
-			xScore += magicSquare[i]
-		case O:
-			oScore += magicSquare[i]
+	for _, triple := range winningTriples {
+		a, b, c := triple[0], triple[1], triple[2]
+		if g.board[a] == X && g.board[b] == X && g.board[c] == X {
+			return true, false
+		}
+		if g.board[a] == O && g.board[b] == O && g.board[c] == O {
+			return false, true
 		}
 	}
-	return xScore == magicConstant, oScore == magicConstant
+
+	return false, false
 }
 
 func (g *game) canContinue() bool {

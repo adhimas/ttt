@@ -6,23 +6,10 @@ import (
 )
 
 func TestCheckWinner(t *testing.T) {
-	tests := [][]int{
-		{0, 1, 2}, // rows
-		{3, 4, 5},
-		{6, 7, 8},
-
-		{0, 3, 6}, // cols
-		{1, 4, 7},
-		{2, 5, 8},
-
-		{0, 4, 5}, // diags
-		{6, 4, 7},
-	}
-
-	for _, tt := range tests {
+	for _, triple := range winningTriples {
 		game := newGame()
-		for i := range tt {
-			game.board[i] = X
+		for _, cell := range triple {
+			game.board[cell] = X
 		}
 		x, _ := game.checkWinner()
 		if !x {
